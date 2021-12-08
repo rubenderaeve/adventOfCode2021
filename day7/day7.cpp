@@ -7,7 +7,7 @@
 
 int main()
 {
-	std::cout << "Hello World!\n";
+	std::cout << "Day7\n";
 	std::string tmp;
 	std::vector<int> v;
 	std::ifstream file("input.txt");
