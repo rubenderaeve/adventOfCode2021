@@ -11,7 +11,6 @@
 int main()
 {
 	std::cout << "Day8\n";
-	std::vector<int> v;
 	std::string line;
 	std::ifstream file("input.txt");
 	int resPartOne = 0;
@@ -27,7 +26,6 @@ int main()
 	freqToN[std::vector<int>{8, 8, 9 }] = 7;
 	freqToN[std::vector<int>{4, 6, 7, 7, 8, 8, 9 }] = 8;
 	freqToN[std::vector<int>{6, 7, 7, 8, 8, 9 }] = 9;
-
 
 	while (std::getline(file, line)) {
 		std::string delimiter = " | ";
