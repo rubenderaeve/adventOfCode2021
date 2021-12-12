@@ -1,20 +1,53 @@
-// day12.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
+#include <vector>
+#include <stack>
+#include <unordered_map>
+#include <set>
+#include <string>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
-int main()
-{
-    std::cout << "Hello World!\n";
+int partOneOrTwo = 1;
+
+std::unordered_map<std::string, std::set<std::string>> edges;
+std::stack<std::unordered_map<std::string, int>> paths;
+int finishedPaths = 0;
+
+void followEdge(std::set<std::string> subPoints, bool pointAlreadyInPath) {
+	auto path = paths.top();
+	for (auto& point : subPoints) {
+		if (!path.empty() && pointAlreadyInPath && path.find(point) != path.end()) continue;
+		paths.push(path);
+		if (point != "end") {
+			if (!isupper(point[0])) {
+				++paths.top()[point];
+				followEdge(edges[point], pointAlreadyInPath ? true : paths.top()[point] == partOneOrTwo);
+			}
+			else followEdge(edges[point], pointAlreadyInPath);
+		}
+		else finishedPaths++;
+		paths.pop();
+	}
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+void ReadInput(std::string fileName) {
+	std::ifstream file(fileName);
+	std::string edge;
+	while (std::getline(file, edge)) {
+		std::stringstream edgestr(edge);
+		std::string pos;
+		std::vector<std::string> posOneTwo;
+		while (std::getline(edgestr, pos, '-')) { posOneTwo.push_back(pos); }
+		if (posOneTwo[1] != "start" && posOneTwo[0] != "end")
+			edges[posOneTwo[0]].insert(posOneTwo[1]);
+		if (posOneTwo[0] != "start" && posOneTwo[1] != "end")
+			edges[posOneTwo[1]].insert(posOneTwo[0]);
+	}
+}
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+int main() {
+	ReadInput("input.txt");
+	paths.push(std::unordered_map<std::string, int>());
+	followEdge(edges["start"], false);
+	std::cout << "paths: " << finishedPaths;
+}
